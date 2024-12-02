@@ -1,0 +1,4 @@
+.zig-cache
+zig-out
+inputs
+!inputs/example*
