@@ -43,7 +43,6 @@ pub fn solvePartTwo() !void {
         const curr = count_map.get(item) orelse 0;
         try count_map.put(item, curr + 1);
     }
-    
 
     var res: u32 = 0;
     for (first_list.items) |item| {
@@ -75,6 +74,6 @@ fn parseInput(allocator: Allocator) !ProblemInput {
         const second = try std.fmt.parseInt(u32, second_str, 10);
         try second_list.append(second);
     }
-    
+
     return .{first_list, second_list};
 }
