@@ -119,7 +119,7 @@ pub fn solvePartTwo() !void {
     var gpa = std.heap.GeneralPurposeAllocator(.{}){};
     const allocator = gpa.allocator();
 
-    var input = try Input.init(allocator, "inputs/day5.txt");
+    var input = try Input.init(allocator, "examples/day5.txt");
     defer input.deinit();
 
     // var it = input.rules_map.iterator();
@@ -138,6 +138,7 @@ pub fn solvePartTwo() !void {
         const valid = try checkUpdate(allocator, update.items, input.rules_map);
         if (!valid) {
             try topologicalSort(allocator, &update.items, input.rules_map);
+            // zigSort(&update.items, input.rules_map);
             const mid = middle(update.items);
             res += mid;
         }
@@ -181,6 +182,29 @@ fn middle(update: []u32) u32 {
 
     const mid: usize = @divExact(update.len - 1, 2);
     return update[mid];
+}
+
+fn cmpPage(rules_map: RulesMap, a: u32, b: u32) bool {
+    const rules_a_opt = rules_map.get(a);
+    if (rules_a_opt) |rules_a| {
+        if (rules_a.contains(b)) {
+            return true;
+        }
+    }
+
+    const rules_b_opt = rules_map.get(b);
+    if (rules_b_opt) |rules_b| {
+        if (rules_b.contains(a)) {
+            return false;
+        }
+    }
+
+    // should be unreachable
+    return true;
+}
+
+fn zigSort(update: *[]u32, rules_map: RulesMap) void {
+    std.mem.sort(u32, update.*, rules_map, cmpPage);
 }
 
 fn topologicalSort(allocator: Allocator, update: *[]u32, rules_map: RulesMap) !void {
