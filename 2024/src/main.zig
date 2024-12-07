@@ -4,6 +4,7 @@ const day3 = @import("day3.zig");
 const day4 = @import("day4.zig");
 const day5 = @import("day5.zig");
 const day6 = @import("day6.zig");
+const day7 = @import("day7.zig");
 
 pub fn main() !void {
     // try day1.solvePartOne();
@@ -16,5 +17,7 @@ pub fn main() !void {
     // try day5.solvePartOne();
     // try day5.solvePartTwo();
     // try day6.solvePartOne();
-    try day6.solvePartTwo();
+    // try day6.solvePartTwo();
+    // try day7.solvePartOne();
+    try day7.solvePartTwo();
 }
