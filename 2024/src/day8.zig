@@ -187,8 +187,8 @@ pub fn solvePartTwo() !void {
                 min_increment.c = -min_increment.c;
 
                 curr = UnsafePoint{
-                    .r = @as(i32, @intCast(antenna2.r)),
-                    .c = @as(i32, @intCast(antenna2.c)),
+                    .r = @as(i32, @intCast(antenna1.r)),
+                    .c = @as(i32, @intCast(antenna1.c)),
                 };
 
                 while (inBounds(curr, input.rows, input.cols)) {
