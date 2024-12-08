@@ -54,7 +54,7 @@ pub fn solvePartTwo() !void {
 }
 
 fn parseInput(allocator: Allocator) !ProblemInput {
-    const file = try std.fs.cwd().openFile("inputs/day1.txt", .{});
+    const file = try std.fs.cwd().openFile("examples/day1.txt", .{});
     defer file.close();
 
     var first_list = ArrayList(u32).init(allocator);

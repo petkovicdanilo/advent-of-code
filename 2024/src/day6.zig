@@ -77,7 +77,7 @@ pub fn solvePartOne() !void {
     var gpa = std.heap.GeneralPurposeAllocator(.{}){};
     const allocator = gpa.allocator();
 
-    var input = try Input.init(allocator, "inputs/day6.txt");
+    var input = try Input.init(allocator, "examples/day6.txt");
     defer input.deinit();
 
     var player = input.player;

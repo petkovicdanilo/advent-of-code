@@ -12,7 +12,7 @@ pub fn solvePartOne() !void {
     var gpa = std.heap.GeneralPurposeAllocator(.{}){};
     const allocator = gpa.allocator();
 
-    const input = try getInput(allocator, "inputs/day3.txt");
+    const input = try getInput(allocator, "examples/day3.txt");
     defer allocator.free(input);
      
     var result: u64 = 0;
@@ -36,7 +36,7 @@ pub fn solvePartTwo() !void {
     var gpa = std.heap.GeneralPurposeAllocator(.{}){};
     const allocator = gpa.allocator();
 
-    const input = try getInput(allocator, "inputs/day3.txt");
+    const input = try getInput(allocator, "examples/day3.txt");
     defer allocator.free(input);
 
     var result: u64 = 0;
