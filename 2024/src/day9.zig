@@ -3,11 +3,11 @@ const print = std.debug.print;
 const ArrayList = std.ArrayList;
 const Allocator = std.mem.Allocator;
 const AutoHashMap = std.AutoHashMap;
+const PriorityQueue = std.PriorityQueue;
 
 const Section = struct {
     len: usize,
     file_id: ?u32,
-    start_idx: usize, // needed only for part two
 };
 
 const Input = ArrayList(Section);
@@ -19,7 +19,6 @@ fn getInput(allocator: Allocator, file_name: []const u8) !Input {
     var parse_file = true;
     var input = Input.init(allocator);
     var curr_file_id: u32 = 0;
-    var curr_idx: usize = 0;
 
     const file_buffer = try file.readToEndAlloc(allocator, 1024*1024);
     defer allocator.free(file_buffer);
@@ -30,7 +29,6 @@ fn getInput(allocator: Allocator, file_name: []const u8) !Input {
             try input.append(.{
                 .len = num,
                 .file_id = curr_file_id,
-                .start_idx = curr_idx,
             });
 
             curr_file_id += 1;
@@ -38,14 +36,68 @@ fn getInput(allocator: Allocator, file_name: []const u8) !Input {
             try input.append(.{
                 .len = num,
                 .file_id = null,
-                .start_idx = curr_idx,
             });
         }
-        curr_idx += num;
         parse_file = !parse_file;
     }
     
     return input;
+}
+
+const SectionPartTwo = struct {
+    len: usize,
+    file_id: u32,
+    start_idx: usize,
+};
+
+fn lessThan(context: void, a: usize, b: usize) std.math.Order {
+    _ = context;
+    return std.math.order(a, b);
+}
+
+const InputPartTwo = struct {
+    free_space_map: [10]PriorityQueue(usize, void, lessThan),
+    file_sections: ArrayList(SectionPartTwo),
+};
+
+fn getInputPartTwo(allocator: Allocator, file_name: []const u8) !InputPartTwo {
+    const file = try std.fs.cwd().openFile(file_name, .{});
+    defer file.close();
+
+    var parse_file = true;
+    var curr_file_id: u32 = 0;
+    var curr_idx: usize = 0;
+
+    const file_buffer = try file.readToEndAlloc(allocator, 1024*1024);
+    defer allocator.free(file_buffer);
+
+    var free_space_map: [10]PriorityQueue(usize, void, lessThan) = undefined;
+    for (0..10) |i| {
+        free_space_map[i] = PriorityQueue(usize, void, lessThan).init(allocator, {});
+    }
+    var file_sections = ArrayList(SectionPartTwo).init(allocator);
+
+    for (0..file_buffer.len - 1) |i| {
+        const len = try std.fmt.parseInt(usize, file_buffer[i..i+1], 10);
+        if (parse_file) {
+            try file_sections.append(.{
+                .len = len,
+                .file_id = curr_file_id,
+                .start_idx = curr_idx,
+            });
+
+            curr_file_id += 1;
+        } else {
+            try free_space_map[len].add(curr_idx);
+        }
+        curr_idx += len;
+        parse_file = !parse_file;
+    }
+    
+    return .{
+        .free_space_map = free_space_map,
+        .file_sections = file_sections,
+    };
 }
 
 pub fn solvePartOne() !void {
@@ -102,48 +154,66 @@ pub fn solvePartTwo() !void {
     var gpa = std.heap.GeneralPurposeAllocator(.{}){};
     const allocator = gpa.allocator();
 
-    const input = try getInput(allocator, "examples/day9.txt");
+    var input = try getInputPartTwo(allocator, "examples/day9.txt");
     var checksum: u64 = 0;
 
-    var right: usize = input.items.len - 1;
-    if (input.items[right].file_id == null) {
+    var right: usize = input.file_sections.items.len - 1;
+
+    while (right >= 0) {
+        var file = input.file_sections.items[right];
+
+        var min_space_len: usize = 0;
+        var free_space_start_idx: usize = std.math.maxInt(usize);
+
+        for (file.len..10) |len| {
+            var free_space_queue = input.free_space_map[len];
+            if (free_space_queue.peek()) |idx| {
+                if (idx < free_space_start_idx) {
+                    free_space_start_idx = idx;
+                    min_space_len = len;
+                }
+            }
+        }
+
+        if (free_space_start_idx == std.math.maxInt(usize) or free_space_start_idx > file.start_idx) {
+            // couldn't find slot for this file
+            for (0..file.len) |idx| {
+                checksum += (file.start_idx + idx) * file.file_id;
+            }
+            if (right == 0) {
+                break;
+            }
+            right -= 1;
+            continue;
+        }
+
+        var free_space_queue = input.free_space_map[min_space_len];
+        _ = free_space_queue.remove();
+        input.free_space_map[min_space_len] = free_space_queue;
+
+        if (min_space_len - file.len > 0) {
+            const new_space_len = min_space_len - file.len;
+            const new_free_space_start_idx = free_space_start_idx + file.len;
+
+            var new_free_space_queue = input.free_space_map[new_space_len];
+            try new_free_space_queue.add(new_free_space_start_idx);
+            input.free_space_map[new_space_len] = new_free_space_queue;
+        }
+
+        file.start_idx = free_space_start_idx;
+        for (0..file.len) |idx| {
+            checksum += (file.start_idx + idx) * file.file_id;
+        }
+         
+        if (right == 0) {
+            break;
+        }
+
         right -= 1;
     }
 
-    while (right > 0) {
-        var left: usize = 1;
-
-        // find gap where input.items[right] would fit.
-        while (left < right) {
-            const left_len = input.items[left].len;
-            if (left_len > 0 and left_len >= input.items[right].len) {
-                break;
-            }
-            left += 2;
-        }
-
-        if (left >= right) {
-            // didn't find any gap that would fit file input.items[right]
-            right -= 2;
-            continue;
-        }
-
-        input.items[right].start_idx = input.items[left].start_idx;
-
-        input.items[left].len -= input.items[right].len;
-        input.items[left].start_idx += input.items[right].len;
-        
-        right -= 2;
-    }
-
-    for (0.., input.items) |i, el| {
-        if (i % 2 != 0) {
-            continue;
-        }
-
-        for (0..el.len) |idx| {
-            checksum += (el.start_idx + idx) * el.file_id.?;
-        }
+    for (input.free_space_map) |free_space_queue| {
+        defer free_space_queue.deinit();
     }
 
     print("{d}\n", .{checksum});
