@@ -30,53 +30,35 @@ fn getInput(allocator: Allocator, file_name: []const u8) !Input {
 }
 
 pub fn solvePartOne() !void {
-    var gpa = std.heap.GeneralPurposeAllocator(.{}){};
-    const allocator = gpa.allocator();
-
-    const input = try getInput(allocator, "examples/day11.txt");
-    defer input.deinit();
-
-    var visited: [26]AutoHashMap(u128, u128) = undefined;
-
-    for (0..26) |i| {
-        visited[i] = AutoHashMap(u128, u128).init(allocator);
-    }
-
-    var res: u128 = 0;
-    for (input.items) |el| {
-        const sub_res = try blink(el, 25, &visited[0..]);
-        res += sub_res;
-    }
-
-    print("{d}\n", .{res});
-
-    for (0..26) |i| {
-        visited[i].deinit();
-    }
+    try solve(comptime 25);
 }
 
 pub fn solvePartTwo() !void {
+    try solve(comptime 75);
+}
+
+fn solve(comptime n: u32) !void {
     var gpa = std.heap.GeneralPurposeAllocator(.{}){};
     const allocator = gpa.allocator();
 
     const input = try getInput(allocator, "examples/day11.txt");
     defer input.deinit();
 
-    var visited: [76]AutoHashMap(u128, u128) = undefined;
+    var visited: [n + 1]AutoHashMap(u128, u128) = undefined;
 
-    for (0..76) |i| {
+    for (0..n + 1) |i| {
         visited[i] = AutoHashMap(u128, u128).init(allocator);
     }
 
     var res: u128 = 0;
     for (input.items) |el| {
-        const sub_res = try blink(el, 75, &visited[0..]);
+        const sub_res = try blink(el, n, &visited[0..]);
         res += sub_res;
     }
 
     print("{d}\n", .{res});
 
-    for (0..76) |i| {
+    for (0..n) |i| {
         visited[i].deinit();
     }
 }
