@@ -48,7 +48,7 @@ pub fn solvePartOne() !void {
     var gpa = std.heap.GeneralPurposeAllocator(.{}){};
     const allocator = gpa.allocator();
 
-    const robots = try getInput(allocator, "inputs/day14.txt");
+    const robots = try getInput(allocator, "examples/day14.txt");
     defer robots.deinit();
 
     const rows = 103;
@@ -104,7 +104,7 @@ pub fn solvePartTwo() !void {
     var gpa = std.heap.GeneralPurposeAllocator(.{}){};
     const allocator = gpa.allocator();
 
-    const robots = try getInput(allocator, "inputs/day14.txt");
+    const robots = try getInput(allocator, "examples/day14.txt");
     defer robots.deinit();
 
     const rows: usize = 103;
