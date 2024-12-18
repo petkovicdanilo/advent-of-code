@@ -230,13 +230,24 @@ pub fn solvePartTwo() !void {
     var computer = try Computer.init(allocator, "examples/day17.txt");
     defer computer.deinit();
 
-    // count how many digits can be skipped
-    // for example it is 3
-    const skip = 3;
-    // for my particular input we didn't skip any
-    // this could be generalized.
-    // const skip = 0;
-    
+    var skip: u6 = 0;
+    for (0.., computer.program.items) |i, op| {
+        if (i % 2 != 0) {
+            continue;
+        }
+        
+        // if we shift A register before we use it, we can ignore these bits;
+        if (op == 0) {
+            skip += 3;
+        } else if (op == 2 and computer.program.items[i + 1] == 4) {
+            break;
+        } else if (op == 5 and computer.program.items[i + 1] == 4) {
+            break;
+        } else if (op == 6 or op == 7) {
+            break;
+        }
+    }
+
     var A: u64 = 0;
     const program_len = computer.program.items.len;
 
