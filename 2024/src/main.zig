@@ -20,6 +20,7 @@ const day19 = @import("day19.zig");
 const day20 = @import("day20.zig");
 const day21 = @import("day21.zig");
 const day22 = @import("day22.zig");
+const day23 = @import("day23.zig");
 
 pub fn main() !void {
     // try day1.solvePartOne();
@@ -65,4 +66,6 @@ pub fn main() !void {
     // try day21.solvePartTwo();
     // try day22.solvePartOne();
     // try day22.solvePartTwo();
+    // try day23.solvePartOne();
+    // try day23.solvePartTwo();
 }
