@@ -73,5 +73,4 @@ pub fn main() !void {
     // try day24.solvePartOne();
     // try day24.solvePartTwo();
     // try day25.solvePartOne();
-    // try day25.solvePartTwo();
 }
