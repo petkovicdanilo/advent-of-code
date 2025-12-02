@@ -1,4 +1,4 @@
-package main
+package day1
 
 import (
 	"bufio"
@@ -61,7 +61,12 @@ func circle2(pos, step, size int) (int, int) {
 }
 
 
-func part1(rotations []Rotation) {
+func SolvePartOne(fileName string) error {
+	rotations, err := getInput(fileName)
+	if err != nil {
+		return err
+	}
+
 	pos := START_POS
 	counter := 0
 	for _, rotation := range rotations {
@@ -71,9 +76,15 @@ func part1(rotations []Rotation) {
 		}
 	}
 	fmt.Printf("%d\n", counter)
+	return nil
 }
 
-func part2(rotations []Rotation) {
+func SolvePartTwo(fileName string) error {
+	rotations, err := getInput(fileName)
+	if err != nil {
+		return err
+	}
+
 	pos := START_POS
 	counter := 0
 	for _, rotation := range rotations {
@@ -82,14 +93,15 @@ func part2(rotations []Rotation) {
 		counter += res
 	}
 	fmt.Printf("%d\n", counter)
+	return nil
 }
 
-func main() {
-	fileName := os.Args[1]
+func getInput(fileName string) ([]Rotation, error) {
 	f, err := os.Open(fileName)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
+	defer f.Close()
 
 	rotations := make([]Rotation, 0, 0)
 
@@ -104,7 +116,7 @@ func main() {
 		}
 		n, err := strconv.ParseInt(line[1:], 0, 32)
 		if err != nil {
-			panic(err)
+			return nil, err
 		}
 
 		r := Rotation {
@@ -114,8 +126,5 @@ func main() {
 		rotations = append(rotations, r)
 	}
 
-	f.Close()
-
-	// part1(rotations)
-	part2(rotations)
+	return rotations, nil
 }
