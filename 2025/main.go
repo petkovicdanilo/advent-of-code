@@ -6,6 +6,7 @@ import (
 
 	"github.com/petkovicdanilo/advent-of-code-2025/day1"
 	"github.com/petkovicdanilo/advent-of-code-2025/day2"
+	"github.com/petkovicdanilo/advent-of-code-2025/day3"
 )
 
 func main() {
@@ -45,6 +46,19 @@ func main() {
 			}
 		case 2:
 			err := day2.SolvePartTwo(fileName)
+			if err != nil {
+				panic(err)
+			}
+		}
+	case 3:
+		switch part {
+		case 1:
+			err := day3.SolvePartOne(fileName)
+			if err != nil {
+				panic(err)
+			}
+		case 2:
+			err := day3.SolvePartTwo(fileName)
 			if err != nil {
 				panic(err)
 			}
