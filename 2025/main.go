@@ -7,6 +7,7 @@ import (
 	"github.com/petkovicdanilo/advent-of-code-2025/day1"
 	"github.com/petkovicdanilo/advent-of-code-2025/day2"
 	"github.com/petkovicdanilo/advent-of-code-2025/day3"
+	"github.com/petkovicdanilo/advent-of-code-2025/day4"
 )
 
 func main() {
@@ -27,41 +28,37 @@ func main() {
 	case 1:
 		switch part {
 		case 1:
-			err := day1.SolvePartOne(fileName)
-			if err != nil {
-				panic(err)
-			}
+			must(day1.SolvePartOne(fileName))
 		case 2:
-			err := day1.SolvePartTwo(fileName)
-			if err != nil {
-				panic(err)
-			}
+			must(day1.SolvePartTwo(fileName))
 		}
 	case 2:
 		switch part {
 		case 1:
-			err := day2.SolvePartOne(fileName)
-			if err != nil {
-				panic(err)
-			}
+			must(day2.SolvePartOne(fileName))
 		case 2:
-			err := day2.SolvePartTwo(fileName)
-			if err != nil {
-				panic(err)
-			}
+			must(day2.SolvePartTwo(fileName))
 		}
 	case 3:
 		switch part {
 		case 1:
-			err := day3.SolvePartOne(fileName)
-			if err != nil {
-				panic(err)
-			}
+			must(day3.SolvePartOne(fileName))
 		case 2:
-			err := day3.SolvePartTwo(fileName)
-			if err != nil {
-				panic(err)
-			}
+			must(day3.SolvePartTwo(fileName))
+		}
+	case 4:
+		switch part {
+		case 1:
+			must(day4.SolvePartOne(fileName))
+		case 2:
+			must(day4.SolvePartTwo(fileName))
 		}
 	}
+}
+
+
+func must(err error) {
+    if err != nil {
+        panic(err)
+    }
 }
