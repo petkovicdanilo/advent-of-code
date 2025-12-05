@@ -98,48 +98,34 @@ func SolvePartTwo(fileName string) error {
 		return err
 	}
 
-	NUM_DIGITS := 12
+	const NUM_DIGITS = 12
 
 	sum := uint64(0)
 	for _, bank := range banks {
-		pickedIdxMap := make(map[uint8]struct{})
-
-		joltage := uint64(0)
-
-		for range(NUM_DIGITS) {
-			maxJoltage := uint64(0)
+		pickedIdx := [NUM_DIGITS]uint8{}
+		for i := range(NUM_DIGITS) {
+			left := 0
+			if i != 0 {
+				left = int(pickedIdx[i - 1]) + 1
+			}
+			right := len(bank) - 12 + i
+			maxVal := uint8(0)
 			maxIdx := uint8(0)
-			for idx := range bank {
-				if _, found := pickedIdxMap[uint8(idx)]; found {
-					continue
+			// fmt.Printf("[%d,%d]\n", left, right)
+			for j := left; j <= right; j++ {
+				if bank[j] > maxVal {
+					maxVal = bank[j]
+					maxIdx = uint8(j)
 				}
-
-				// This can be prettier (and more efficient)
-				// with something like binary search tree
-
-				// temporarily add idx to picked
-				pickedIdxMap[uint8(idx)] = struct{}{}
-
-				joltage := calculateJoltage(bank, pickedIdxMap)
-				if joltage > maxJoltage {
-					maxIdx = uint8(idx)
-					maxJoltage = joltage
-				}
-
-				// cleanup
-				delete(pickedIdxMap, uint8(idx))
 			}
 
-			pickedIdxMap[maxIdx] = struct{}{}
-			joltage = maxJoltage
+			pickedIdx[i] = maxIdx
 		}
 
-		var pickedIdxList []uint8
-		for idx := range pickedIdxMap {
-			pickedIdxList = append(pickedIdxList, idx)
+		joltage := uint64(0)
+		for _, idx := range(pickedIdx) {
+			joltage = joltage * 10 + uint64(bank[idx])
 		}
-		slices.Sort(pickedIdxList)
-
 		sum += joltage
 	}
 
