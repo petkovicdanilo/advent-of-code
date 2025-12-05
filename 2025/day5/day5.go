@@ -21,17 +21,6 @@ type Range struct {
 	end int64
 }
 
-const (
-	OPEN = iota
-	CLOSE
-)
-
-type RangePoint struct {
-	n int64
-	ty int
-	count int
-}
-
 func getInput(fileName string) (*Input, error) {
 	f, err := os.Open(fileName)
 	if err != nil {
@@ -112,83 +101,49 @@ func SolvePartOne(fileName string) error {
 	return nil
 }
 
+// r1 and r2 are sorted
+func overlap(r1, r2 Range) bool {
+	return !(r2.start > r1.end)
+}
+
+func merge(r1, r2 Range) Range {
+	start := min(r1.start, r2.start)
+	end := max(r1.end, r2.end)
+	return Range {
+		start: start,
+		end: end,
+	}
+}
+
 func SolvePartTwo(fileName string) error {
 	input, err := getInput(fileName)
 	if err != nil {
 		return err
 	}
 
-
-	openPoints := make(map[int64]*RangePoint)
-	closePoints := make(map[int64]*RangePoint)
-	for _, r := range input.ranges {
-		if _, found := openPoints[r.start]; !found {
-			openPoints[r.start] = &RangePoint {
-				n: r.start,
-				count: 0,
-				ty: OPEN,
-			}
+	slices.SortFunc(input.ranges, func(a, b Range) int {
+		if a.start == b.start {
+			return cmp.Compare(a.end, b.end)
 		}
-		p := openPoints[r.start]
-		p.count += 1
-
-		if _, found := closePoints[r.end]; !found {
-			closePoints[r.end] = &RangePoint {
-				n: r.end,
-				count: 0,
-				ty: CLOSE,
-			}
-		}
-		p = closePoints[r.end]
-		p.count += 1
-	}
-
-	var rangePoints []RangePoint
-	for _, p := range openPoints {
-		rangePoints = append(rangePoints, *p)
-	}
-	for _, p := range closePoints {
-		rangePoints = append(rangePoints, *p)
-	}
-
-	slices.SortFunc(rangePoints, func(a, b RangePoint) int {
-		if a.n == b.n {
-			// make open brackets appear first
-			return cmp.Compare(a.ty, b.ty)
-		}
-		return cmp.Compare(a.n, b.n)
+		return cmp.Compare(a.start, b.start)
 	})
-	// fmt.Printf("rangePoints = %v\n", rangePoints)
-
+	
 	s := int64(0)
-	left := rangePoints[0]
-	numOpen := left.count
-	leftIncluded := false
-	for i := 1; i < len(rangePoints); i++ {
-		right := rangePoints[i]
-		if numOpen > 0 {
-			if !leftIncluded {
-				// fmt.Printf("including [%d,%d]\n", left.n, right.n)
-				s += right.n - left.n + 1
-			} else {
-				// fmt.Printf("including (%d,%d]\n", left.n, right.n)
-				s += right.n - left.n
-			}
-			leftIncluded = true
+	runningRange := input.ranges[0]
+	for i := 1; i < len(input.ranges); i++ {
+		r := input.ranges[i]
+		if overlap(runningRange, r) {
+			// fmt.Printf("%v and %v overlap\n", runningRange, r)
+			runningRange = merge(runningRange, r)
+			// fmt.Printf("merged to %v\n", runningRange)
 		} else {
-			// we didn't include our current range
-			// so next iteration has to know that it can include its
-			// left point
-			leftIncluded = false
+			s += runningRange.end - runningRange.start + 1
+			// fmt.Printf("%v and %v don't overlap\n", runningRange, r)
+			runningRange = r
 		}
-
-		if right.ty == OPEN {
-			numOpen += right.count
-		} else {
-			numOpen -= right.count
-		}
-		left = right
 	}
+	// fmt.Printf("%v\n", runningRange)
+	s += runningRange.end - runningRange.start + 1
 
 	fmt.Printf("%d\n", s)
 
