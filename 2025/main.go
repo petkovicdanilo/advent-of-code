@@ -14,6 +14,7 @@ import (
 	"github.com/petkovicdanilo/advent-of-code-2025/day8"
 	"github.com/petkovicdanilo/advent-of-code-2025/day9"
 	"github.com/petkovicdanilo/advent-of-code-2025/day10"
+	"github.com/petkovicdanilo/advent-of-code-2025/day11"
 )
 
 func main() {
@@ -100,6 +101,13 @@ func main() {
 			must(day10.SolvePartOne(fileName))
 		case 2:
 			must(day10.SolvePartTwo(fileName))
+		}
+	case 11:
+		switch part {
+		case 1:
+			must(day11.SolvePartOne(fileName))
+		case 2:
+			must(day11.SolvePartTwo(fileName))
 		}
 	}
 }
