@@ -170,10 +170,8 @@ func SolvePartOne(fileName string) error {
 }
 
 func SolvePartTwo(fileName string) error {
-	_, err := getInput(fileName)
-	if err != nil {
-		return err
-	}
-
+	fmt.Printf("Solution for this part is __unfortunately__ in python\n")
+	fmt.Printf("Install z3 library and python package and run:\n")
+	fmt.Printf("  python day10-part2.py <input_file>\n")
 	return nil
 }
