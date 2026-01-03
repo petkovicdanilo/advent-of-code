@@ -1,11 +1,12 @@
 use std::fs;
+use anyhow::{Context, Result};
 
 use crate::Day;
 
 pub(crate) struct Day1;
 
 impl Day for Day1 {
-    fn part1(&mut self, input_file: String) -> Result<(), String> {
+    fn part1(&mut self, input_file: String) -> Result<()> {
         let numbers = parse_input(input_file)?;
 
         let mut res = 0;
@@ -17,7 +18,7 @@ impl Day for Day1 {
         return Ok(());
     }
 
-    fn part2(&mut self, input_file: String) -> Result<(), String> {
+    fn part2(&mut self, input_file: String) -> Result<()> {
         let numbers = parse_input(input_file)?;
 
         let mut res = 0;
@@ -38,14 +39,14 @@ impl Day for Day1 {
     }
 }
 
-fn parse_input(input_file: String) -> Result<Vec<i32>, String> {
+fn parse_input(input_file: String) -> Result<Vec<i32>> {
     let contents = fs::read_to_string(input_file)
-        .map_err(|e| format!("Couldn't read from file: {e}"))?;
+        .context("Couldn't read from the input file")?;
 
     let numbers: Result<Vec<_>, _> = contents.lines()
         .map(|line| line.parse::<i32>())
         .collect();
-    let numbers = numbers.map_err(|e| format!("Failed to parse input file: {e}"))?;
+    let numbers = numbers.context("Failed to parse the input file")?;
 
     return Ok(numbers);
 }
