@@ -1,9 +1,11 @@
 use std::env;
 use anyhow::{Context, Result, bail};
 
-use crate::day1::Day1;
-
 mod day1;
+mod day2;
+
+use crate::day1::Day1;
+use crate::day2::Day2;
 
 trait Day {
     fn part1(&mut self, input_file: String) -> Result<()>;
@@ -14,6 +16,9 @@ fn get_day(n: i32) -> Result<Box<dyn Day>> {
     match n {
         1 => {
             return Ok(Box::new(Day1{}));
+        },
+        2 => {
+            return Ok(Box::new(Day2{}));
         },
         _ => {
             bail!("Unsupported day number")
