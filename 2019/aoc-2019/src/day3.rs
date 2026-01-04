@@ -5,37 +5,35 @@ use anyhow::{Context, Result, bail};
 
 pub(crate) struct Day3;
 
-const PANEL_SIZE: usize = 25000;
-
 impl Day for Day3 {
     fn part1(&mut self, input_file: String) -> anyhow::Result<()> {
         let (l1, l2) = parse_input(input_file)?;
 
-        let mut panel: HashSet<(usize, usize)> = HashSet::new();
+        let mut panel: HashSet<(i32, i32)> = HashSet::new();
 
-        let central_port = (PANEL_SIZE / 2, PANEL_SIZE / 2);
+        let central_port = (0, 0);
 
-        let mut r = central_port.0;
-        let mut c = central_port.1;
+        let mut r = 0;
+        let mut c = 0;
 
         for component in &l1.path {
             let (dr, dc) = direction_to_rc_change(&component.direction);
             for _ in 0..component.amount {
-                r = (r as i32 + dr) as usize;
-                c = (c as i32 + dc) as usize;
+                r = r as i32 + dr;
+                c = c as i32 + dc;
                 panel.insert((r, c));
             }
         }
 
-        r = central_port.0;
-        c = central_port.1;
+        r = 0;
+        c = 0;
 
         let mut min_dist = u32::MAX;
         for component in &l2.path {
             let (dr, dc) = direction_to_rc_change(&component.direction);
             for _ in 0..component.amount {
-                r = (r as i32 + dr) as usize;
-                c = (c as i32 + dc) as usize;
+                r = r as i32 + dr;
+                c = c as i32 + dc;
 
                 if !panel.contains(&(r, c)) {
                     continue;
@@ -53,19 +51,17 @@ impl Day for Day3 {
     fn part2(&mut self, input_file: String) -> anyhow::Result<()> {
         let (l1, l2) = parse_input(input_file)?;
 
-        let mut panel: HashMap<(usize, usize), u32> = HashMap::new();
+        let mut panel: HashMap<(i32, i32), u32> = HashMap::new();
 
-        let central_port = (PANEL_SIZE / 2, PANEL_SIZE / 2);
-
-        let mut r = central_port.0;
-        let mut c = central_port.1;
+        let mut r = 0;
+        let mut c = 0;
 
         let mut steps = 0;
         for component in &l1.path {
             let (dr, dc) = direction_to_rc_change(&component.direction);
             for _ in 0..component.amount {
-                r = (r as i32 + dr) as usize;
-                c = (c as i32 + dc) as usize;
+                r = r as i32 + dr;
+                c = c as i32 + dc;
                 steps += 1;
                 if !panel.contains_key(&(r, c)) {
                     panel.insert((r, c), steps);
@@ -74,15 +70,15 @@ impl Day for Day3 {
         }
 
         let mut l2_steps = 0;
-        r = central_port.0;
-        c = central_port.1;
+        r = 0;
+        c = 0;
 
         let mut min_delay = u32::MAX;
         for component in &l2.path {
             let (dr, dc) = direction_to_rc_change(&component.direction);
             for _ in 0..component.amount {
-                r = (r as i32 + dr) as usize;
-                c = (c as i32 + dc) as usize;
+                r = r as i32 + dr;
+                c = c as i32 + dc;
 
                 l2_steps += 1;
 
@@ -127,9 +123,9 @@ fn direction_to_rc_change(d: &Direction) -> (i32, i32) {
     };
 }
 
-fn manhattan_distance(p1: (usize, usize), p2: (usize, usize)) -> u32 {
-    let dist_r = (p1.0 as i32 - p2.0 as i32).abs() as u32; 
-    let dist_c = (p1.1 as i32 - p2.1 as i32).abs() as u32; 
+fn manhattan_distance(p1: (i32, i32), p2: (i32, i32)) -> u32 {
+    let dist_r = (p1.0 - p2.0).abs() as u32; 
+    let dist_c = (p1.1 - p2.1).abs() as u32; 
     return dist_r + dist_c;
 }
 
