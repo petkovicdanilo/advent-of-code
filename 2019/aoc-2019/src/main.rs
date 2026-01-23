@@ -1,6 +1,7 @@
 use std::env;
 use anyhow::{Context, Result, bail};
 
+mod computer;
 mod day1;
 mod day2;
 mod day3;
