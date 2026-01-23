@@ -27,7 +27,7 @@ impl Computer {
     }
 
     pub(crate) fn run(&mut self, mut inputs: impl Iterator<Item=i32>) 
-            -> Result<impl Iterator<Item=i32>> {
+            -> Result<RunOutput> {
         let mut outputs = Vec::<i32>::new();
         loop {
             // println!("IP = {}", self.ip);
@@ -43,8 +43,15 @@ impl Computer {
                     self.ip += instruction.size();
                 },
                 Instruction::Input(param) => {
-                    self.memory[param as usize] = inputs.next()
-                        .context("Couldn't find next input value.")?;
+                    let next = inputs.next();
+                    if next.is_none() {
+                        return Ok(RunOutput {
+                            outputs,
+                            status: Status::PausedForInput,
+                        });
+                    }
+
+                    self.memory[param as usize] = next.unwrap();
                     self.ip += instruction.size();
                 },
                 Instruction::Output(param) => {
@@ -83,7 +90,7 @@ impl Computer {
                     self.ip += instruction.size();
                 },
                 Instruction::Halt => {
-                    return Ok(outputs.into_iter());
+                    return Ok(RunOutput { outputs, status: Status::Halted });
                 },
             }
         }
@@ -373,5 +380,16 @@ impl TryFrom<u8> for ParameterMode {
             _ => Err(()),
         };
     }
+}
+
+#[derive(Eq, PartialEq)]
+pub(crate) enum Status {
+    Halted,
+    PausedForInput,
+}
+
+pub(crate) struct RunOutput {
+    pub(crate) outputs: Vec<i32>,
+    pub(crate) status: Status,
 }
 

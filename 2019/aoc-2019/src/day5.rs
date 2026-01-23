@@ -9,8 +9,8 @@ impl Day for Day5 {
         let mut computer = Computer::from_file(&input_file)?;
         let inputs = std::iter::repeat_n(1, 1);
 
-        let outputs = computer.run(inputs)?;
-        for output in outputs {
+        let res = computer.run(inputs)?;
+        for output in res.outputs {
             println!("OUTPUT: {output}");
         }
 
@@ -21,8 +21,8 @@ impl Day for Day5 {
         let mut computer = Computer::from_file(&input_file)?;
         let inputs = std::iter::repeat_n(5, 1);
 
-        let outputs = computer.run(inputs)?;
-        for output in outputs {
+        let res = computer.run(inputs)?;
+        for output in res.outputs {
             println!("OUTPUT: {output}");
         }
 

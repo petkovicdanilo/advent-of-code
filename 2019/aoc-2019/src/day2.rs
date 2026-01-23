@@ -19,7 +19,7 @@ impl Day for Day2 {
     }
 
     fn part2(&mut self, input_file: String) -> Result<()> {
-        let mut computer = Computer::from_file(&input_file)?;
+        let computer = Computer::from_file(&input_file)?;
 
         for i in 0..=99 {
             for j in 0..=99 {
