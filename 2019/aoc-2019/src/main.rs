@@ -9,6 +9,7 @@ mod day4;
 mod day5;
 mod day6;
 mod day7;
+mod day8;
 
 use crate::day1::Day1;
 use crate::day2::Day2;
@@ -17,6 +18,7 @@ use crate::day4::Day4;
 use crate::day5::Day5;
 use crate::day6::Day6;
 use crate::day7::Day7;
+use crate::day8::Day8;
 
 trait Day {
     fn part1(&mut self, input_file: String) -> Result<()>;
@@ -45,6 +47,9 @@ fn get_day(n: i32) -> Result<Box<dyn Day>> {
         },
         7 => {
             return Ok(Box::new(Day7{}));
+        },
+        8 => {
+            return Ok(Box::new(Day8{}));
         },
         _ => {
             bail!("Unsupported day number")
