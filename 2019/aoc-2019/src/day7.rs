@@ -164,13 +164,13 @@ impl Day for Day7 {
    }
 }
 
-fn generate_permutations(n: i32) -> Vec<Vec<i32>> {
+fn generate_permutations(n: i64) -> Vec<Vec<i64>> {
     let mut curr_state = Vec::new();
     return generate_permutations_inner(n, &mut curr_state);
 }
 
-fn generate_permutations_inner(n: i32, curr_state: &mut Vec<i32>) -> Vec<Vec<i32>> {
-    if (curr_state.len() as i32) == n {
+fn generate_permutations_inner(n: i64, curr_state: &mut Vec<i64>) -> Vec<Vec<i64>> {
+    if (curr_state.len() as i64) == n {
         return vec![curr_state.clone()];
     }
 
