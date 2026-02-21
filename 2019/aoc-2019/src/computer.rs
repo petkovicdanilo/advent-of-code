@@ -1,6 +1,6 @@
 use std::{collections::HashMap, fs};
 
-use anyhow::{Context, Result, bail};
+use anyhow::{Context, Result, anyhow, bail};
 
 #[derive(Clone, Debug)]
 pub(crate) struct Computer {
@@ -425,14 +425,14 @@ enum ParameterMode {
 }
 
 impl TryFrom<u8> for ParameterMode {
-    type Error = ();
+    type Error = anyhow::Error;
 
     fn try_from(value: u8) -> std::result::Result<Self, Self::Error> {
         return match value {
             0 => Ok(ParameterMode::Position),
             1 => Ok(ParameterMode::Immediate),
             2 => Ok(ParameterMode::Relative),
-            _ => Err(()),
+            c => Err(anyhow!("Invalid char `{c}`")),
         };
     }
 }
