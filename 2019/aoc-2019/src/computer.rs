@@ -437,12 +437,13 @@ impl TryFrom<u8> for ParameterMode {
     }
 }
 
-#[derive(Eq, PartialEq)]
+#[derive(Debug, Eq, PartialEq)]
 pub(crate) enum Status {
     Halted,
     PausedForInput,
 }
 
+#[derive(Debug)]
 pub(crate) struct RunOutput {
     pub(crate) outputs: Vec<i64>,
     pub(crate) status: Status,
